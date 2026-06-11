@@ -1,0 +1,44 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.2.0
+  python: circleci/python@2.1.1
+
+jobs:
+  frontend:
+    docker:
+      - image: cimg/node:lts-browsers  # lts-browsers includes Chrome for ng test
+    steps:
+      - checkout
+      - node/install-packages:
+          app-dir: frontend            # tells the orb where package.json lives
+          pkg-manager: npm
+      - run:
+          name: Lint
+          command: cd frontend && npx ng lint
+      - run:
+          name: Unit Tests
+          command: cd frontend && npx ng test --watch=false --browsers=ChromeHeadless --no-progress
+
+  backend:
+    docker:
+      - image: cimg/python:3.12
+    environment:
+      AWS_DEFAULT_REGION: us-east-1   # not a secret, safe to hardcode here
+    steps:
+      - checkout
+      - python/install-packages:
+          pip-dependency-file: backend/requirements.txt
+          pkg-manager: pip
+      - run:
+          name: Run Tests
+          command: cd backend && pytest -v
+          # AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY injected from
+          # CircleCI Project Settings → Environment Variables at runtime.
+          # Tests should mock the Bedrock layer so no real AWS call is made.
+
+workflows:
+  build-and-test:
+    jobs:
+      - frontend
+      - backend          # both run in parallel on every push

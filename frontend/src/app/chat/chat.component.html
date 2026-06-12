@@ -1,0 +1,32 @@
+<div class="chat-container">
+
+  <!-- Message list -->
+  <div class="message-list">
+    <div
+      *ngFor="let message of history"
+      [ngClass]="message.role === 'user' ? 'message user' : 'message assistant'"
+    >
+      <strong>{{ message.role === 'user' ? 'You' : 'Assistant' }}</strong>
+      <p>{{ message.content }}</p>
+    </div>
+
+    <!-- Loading indicator -->
+    <div *ngIf="loading" class="message assistant">
+      <p>Thinking...</p>
+    </div>
+  </div>
+
+  <!-- Input form -->
+  <form [formGroup]="chatForm" (ngSubmit)="onSubmit()" class="chat-form">
+    <input
+      formControlName="message"
+      type="text"
+      placeholder="Type a message..."
+      [disabled]="loading"
+    />
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Sending...' : 'Send' }}
+    </button>
+  </form>
+
+</div>

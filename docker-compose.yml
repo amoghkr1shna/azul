@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: ./backend        # Docker looks for Dockerfile here
+    ports:
+      - "8000:8000"             # host:container — maps container port 8000 to your machine
+    env_file:
+      - ./backend/.env          # injects AWS credentials at runtime, never baked into image
+
+  frontend:
+    build:
+      context: ./frontend       # Docker looks for Dockerfile here
+    ports:
+      - "80:80"                 # Angular app available at http://localhost:80
+    depends_on:
+      - backend                 # starts backend first, then frontend

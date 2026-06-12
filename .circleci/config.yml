@@ -13,12 +13,12 @@ jobs:
       - node/install-packages:
           app-dir: frontend            # tells the orb where package.json lives
           pkg-manager: npm
-      # - run:
-      #     name: Lint
-      #     command: cd frontend && npx ng lint
-      # - run:
-      #     name: Unit Tests
-      #     command: cd frontend && npx ng test --no-progress
+      - run:
+          name: Lint
+          command: cd frontend && npx ng lint
+      - run:
+          name: Unit Tests
+          command: cd frontend && npx ng test --no-progress
 
   backend:
     docker:
